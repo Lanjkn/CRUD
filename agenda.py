@@ -1,41 +1,48 @@
 AGENDA = {}
 
-def verificaContatos(contato):
-    for contatos in AGENDA:
-        if(contato == contatos):
-            return True
-        else:
-            return False   
 
 def mostraContatos():
-    for contato in AGENDA:
-        buscaContatos(contato)
+    if(AGENDA):
+        for contato in AGENDA:
+            buscaContatos(contato)
+    else:
+        print("Agenda Vazia.")
 
 
 def buscaContatos(contatoProcurado):
-    contatoEncontrado = False
-    for contato in AGENDA:
-        if(contatoProcurado == contato):
-            print(contato, ":\n Telefone:", AGENDA[contato]['telefone'], "\n Email:", AGENDA[contato]["email"], "\n Endereço:", AGENDA[contato]["endereco"])
-            contatoEncontrado = True
-    if(contatoEncontrado == False):
-        print("Contato não encontrado.")
+        try:
+            print(contatoProcurado, ":\n Telefone:", AGENDA[contatoProcurado]['telefone'], "\n Email:", AGENDA[contatoProcurado]["email"], "\n Endereço:", AGENDA[contatoProcurado]["endereco"])
+        except KeyError as e:
+            print("Contato {} não encontrado!".format(e))
+        except Exception as e:
+            print("Algum erro ocorreu. {}".format(e))
+
 
 
 def inserirContato(contato, telefone, email, endereco):
-    AGENDA[contato] = {
-    "telefone":telefone,
-    "email":email,
-    "endereco":endereco,
-    }
+    try:
+        AGENDA[contato] = {
+        "telefone":telefone,
+        "email":email,
+        "endereco":endereco,
+        }
+    except Exception as e:
+        print("Erro: {}".format(e))
 
 
 def editarContato(contato):
+    try:
+        # This is only to test if the contact actually exists. / Apenas para checar se o contato existe de fato!
+        AGENDA[contato]
+    except KeyError:
+        print("Contato {} não existente.".format(contato))
+        return
     print("O que deseja editar?")
     print("1 - Telefone")
     print("2 - Email")
     print("3 - Endereco")
     print("4 - Todos")
+        
     acao = input()
     if(acao == "1"):
         telefone = input("Digite o novo telefone: ")
@@ -58,8 +65,12 @@ def editarContato(contato):
 
 
 def excluirContato(contato):
-    AGENDA.pop(contato)
+    try:
+        AGENDA.pop(contato)
+    except KeyError as e:
+        print("Contato {} não existe!".format(e))
 
+        
 def menu():
     print("O que deseja fazer?: ")
     print("1 - Adicionar Contato")
@@ -67,8 +78,7 @@ def menu():
     print("3 - Alterar dados de Contato")
     print("4 - Buscar Contato")
     print("5 - Mostrar lista de Contatos")
-    print("6 - Sair")
-
+    print("0 - Sair")
 
 
 while True: 
@@ -84,22 +94,17 @@ while True:
         print("Contato {} inserido!".format(contatoNovo))
     elif(acao == "2"):
         contatoExcluir = input("Qual contato deseja excluir?: ") 
-        if (verificaContatos(contatoExcluir)):
-            excluirContato(contatoExcluir)
-        else:
-            print("Contato Inexistente!")
+        excluirContato(contatoExcluir)
+        
     elif(acao == "3"):
         contatoEditar = input("Qual contato deseja editar?: ")
-        if (verificaContatos(contatoEditar)):
-            editarContato(contatoEditar)
-        else:
-            print("Contato inexistente!")
+        editarContato(contatoEditar)
     elif(acao == "4"):
         contatoBusca = input("Qual o nome do seu contato?: ")
         buscaContatos(contatoBusca)
     elif(acao == "5"):
         mostraContatos()
-    elif(acao == "6"):
+    elif(acao == "0"):
         break
     else:
         print("Opção inválida")
