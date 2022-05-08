@@ -31,6 +31,7 @@ def newContact(contact, cellphone, email, address):
         print("Contact {} successfully added.".format(contact))
     except Exception as e:
         print("Error: {}".format(e))
+    saveDB()    
 
 
 def editContact(contact):
@@ -64,6 +65,7 @@ def editContact(contact):
         CONTACTLIST[contact]['address'] = address
     else:
         print("Non-existent choice.")
+    saveDB()    
 
 
 def eraseContact(contact):
@@ -72,6 +74,7 @@ def eraseContact(contact):
         print("Contact {} successfully erased.".format(contact))
     except KeyError as e:
         print("Contact {} doesn't exist.".format(e))
+    saveDB()
 
         
 def menu():
@@ -88,30 +91,40 @@ def menu():
 
 def importContacts(fileName):
     try:
-        with open(fileName, 'r') as file:
+        with open(fileName + ".csv", 'r') as file:
             lines = file.readlines()
             for line in lines:
                 contact = line.strip().split(",")
                 if(contact[0] != "name"):
                     newContact(contact[0], contact[1], contact[2], contact[3])
-
     except IOError :
         print("File not Found.")    
     except Exception as E:
         print("Error: {}".format(E))   
 
 
-def exportContacts():
+def exportContacts(fileName):
     try:
-        with open("contact_list.csv", 'w') as file:
+        with open(fileName + ".csv", 'w') as file:
             file.write("name,cellphone,email,address\n")
             for contact in CONTACTLIST:
                 file.write("{},{},{},{}\n".format(contact, CONTACTLIST[contact]['cellphone'],CONTACTLIST[contact]['email'],CONTACTLIST[contact]['address']))
-        print("Successfully exported contact list!")
     except Exception as E:
         print("Error: {}".format(E))
 
+def saveDB():
+    exportContacts("database")
 
+
+def importDB():
+    print("READING DATABASE")
+    importContacts("database")
+    print("READING FINISHED")
+    print("{} contacts added.".format(len(CONTACTLIST)))
+    print("-----------------------------")
+
+# START SYSTEM
+importDB()
 while True: 
     menu()
     choice = input("Choose an option: ")
@@ -137,9 +150,10 @@ while True:
     elif(choice == "5"):
         showContacts()
     elif(choice == "6"):
-        exportContacts()
+        fileName = input("Input the file name to export:")
+        exportContacts(fileName)
     elif(choice == "7"):
-        fileName = input("Input the file name: ")
+        fileName = input("Input the file name to import: ")
         importContacts(fileName)
     elif(choice == "0"):
         break
